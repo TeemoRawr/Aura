@@ -60,5 +60,15 @@ void AAuraCharacter::InitAbilityActorInfo()
 				AbilitySystemComponent,
 				AttributeSet);
 		}
-	}	
+	}
+
+	InitializeDefaultAttributes();
+}
+
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const TObjectPtr<AAuraPlayerState> AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->GetPlayerLevel();
 }
