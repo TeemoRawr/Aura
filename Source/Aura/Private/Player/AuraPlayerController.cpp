@@ -31,7 +31,6 @@ void AAuraPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(AuraContext, 0);
 	}
 
-
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 
