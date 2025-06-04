@@ -7,7 +7,10 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AI/AuraAIController.h"
 #include "Aura/Aura.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Widgets/AuraUserWidget.h"
@@ -26,6 +29,17 @@ AAuraEnemy::AAuraEnemy()
 	HealthBar->SetupAttachment(GetRootComponent());
 }
 
+void AAuraEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (!HasAuthority()) return;
+	
+	AuraAIController = Cast<AAuraAIController>(NewController);
+	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	AuraAIController->RunBehaviorTree(BehaviorTree);
+}
+
 
 void AAuraEnemy::BeginPlay()
 {
@@ -33,7 +47,11 @@ void AAuraEnemy::BeginPlay()
 
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+
+	if (HasAuthority())
+	{
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);		
+	}
 
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
@@ -70,7 +88,10 @@ void AAuraEnemy::InitAbilityActorInfo()
 	AuraAbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AuraAbilitySystemComponent->AbilityActorInfoSet();
 
-	InitializeDefaultAttributes();
+	if (HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
