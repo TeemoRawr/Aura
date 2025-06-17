@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
+#include "Engine/OverlapResult.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
