@@ -141,6 +141,14 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Resistance to Physical damage"));
 
 	/**
+	 * Meta
+	 */
+	
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("Incoming XP"));
+
+	/**
 	 * Map of Damge Type to Resitances
 	 */
 
