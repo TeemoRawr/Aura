@@ -74,7 +74,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		});
 	}
 
-	AuraPlayerState->OnTotalExperienceAmountChanged.AddUObject(this, &UOverlayWidgetController::OnTotalExperienceAmountChanged);
+	AuraPlayerState->OnXPAmountChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPAmountChanged);
+	AuraPlayerState->OnLevelChangedDelegate.AddLambda([this](const int32 NewLevel)
+	{
+		OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+	});
 }
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)
@@ -95,7 +99,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 	AuraASC->ForEachAbility(BroadcastDelegate);
 }
 
-void UOverlayWidgetController::OnTotalExperienceAmountChanged(int32 NewTotalExperienceAmount) const
+void UOverlayWidgetController::OnXPAmountChanged(int32 NewTotalExperienceAmount) const
 {
 	const AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
 	const ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;

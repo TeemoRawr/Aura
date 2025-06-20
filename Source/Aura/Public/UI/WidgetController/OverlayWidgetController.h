@@ -68,6 +68,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|XP")
 	FOnAttributeChangeSignature OnXPPercentChangedDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|Level")
+	FOnPlayerStatChangedSignature OnPlayerLevelChangedDelegate;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
@@ -80,7 +83,7 @@ protected:
 
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
 
-	void OnTotalExperienceAmountChanged(int32 NewTotalExperienceAmount) const;
+	void OnXPAmountChanged(int32 NewTotalExperienceAmount) const;
 };
 
 template <typename T>

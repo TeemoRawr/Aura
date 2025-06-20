@@ -110,9 +110,6 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 
 	if (CharacterClassInfo == nullptr) return;
-
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(AbilitySystemComponent->GetAvatarActor());
-	const int32 PlayerLevel = CombatInterface ? CombatInterface->GetPlayerLevel() : 1;
 	
 	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
 	{
@@ -121,6 +118,12 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	}
 
 	const FCharacterClassDefaultInfo& CharacterClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+
+	const bool bImplementsCombatInterface = AbilitySystemComponent->GetAvatarActor()->Implements<UCombatInterface>();
+	
+	const int32 PlayerLevel = bImplementsCombatInterface
+		? ICombatInterface::Execute_GetPlayerLevel(AbilitySystemComponent->GetAvatarActor())
+		: 1;
 	
 	for (TSubclassOf<UGameplayAbility> StartupAbility : CharacterClassDefaultInfo.StartupAbilities)
 	{
