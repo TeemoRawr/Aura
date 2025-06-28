@@ -13,21 +13,38 @@
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
+bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& WidgetParamsOut)
+{
+	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		AAuraPlayerState* PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
+		UAbilitySystemComponent* AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
+		UAttributeSet* AttributeSet = PlayerState->GetAttributeSet();
+
+		WidgetParamsOut = FWidgetControllerParams(
+			PlayerController,
+			PlayerState,
+			AbilitySystemComponent,
+			AttributeSet);
+
+		return true;
+	}
+
+	return false;
+}
+
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
 		{
-			AAuraPlayerState* PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent* AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
-			UAttributeSet* AttributeSet = PlayerState->GetAttributeSet();
+			FWidgetControllerParams WidgetControllerParams;
 
-			const FWidgetControllerParams WidgetControllerParams(
-				PlayerController,
-				PlayerState,
-				AbilitySystemComponent,
-				AttributeSet);
+			if (!MakeWidgetControllerParams(WorldContextObject, WidgetControllerParams))
+			{
+				return nullptr;
+			}
 			
 			UOverlayWidgetController* OverlayWidgetController = AuraHUD->GetOverlayWidgetController(WidgetControllerParams);
 
@@ -44,19 +61,38 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 	{
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
 		{
-			AAuraPlayerState* PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent* AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
-			UAttributeSet* AttributeSet = PlayerState->GetAttributeSet();
+			FWidgetControllerParams WidgetControllerParams;
 
-			const FWidgetControllerParams WidgetControllerParams(
-				PlayerController,
-				PlayerState,
-				AbilitySystemComponent,
-				AttributeSet);
+			if (!MakeWidgetControllerParams(WorldContextObject, WidgetControllerParams))
+			{
+				return nullptr;
+			}
 			
 			UAttributeMenuWidgetController* AttributeMenuWidgetController = AuraHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
 
 			return AttributeMenuWidgetController;
+		}
+	}
+
+	return nullptr;
+}
+
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(const UObject* WorldContextObject)
+{
+	if (const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
+		{
+			FWidgetControllerParams WidgetControllerParams;
+
+			if (!MakeWidgetControllerParams(WorldContextObject, WidgetControllerParams))
+			{
+				return nullptr;
+			}
+			
+			USpellMenuWidgetController* SpellMenuWidgetController = AuraHUD->GetSpellMenuWidgetController(WidgetControllerParams);
+
+			return SpellMenuWidgetController;
 		}
 	}
 
@@ -139,6 +175,15 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	if (AuraGameMode == nullptr) return nullptr;
 	
 	return  AuraGameMode->CharacterClassInfo;
+}
+
+UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
+{
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+
+	if (AuraGameMode == nullptr) return nullptr;
+	
+	return  AuraGameMode->AbilityInfo;
 }
 
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)

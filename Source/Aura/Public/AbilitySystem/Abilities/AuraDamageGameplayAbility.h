@@ -24,4 +24,6 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+
+	float GetDamageByDamageType(int32 InLevel, const FGameplayTag& DamageType);
 };
