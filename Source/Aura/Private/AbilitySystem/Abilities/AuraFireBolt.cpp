@@ -13,8 +13,7 @@ FString UAuraFireBolt::GetDescription(int32 Level)
 	
 	if (Level == 1)
 	{
-		return FString::Printf(
-			TEXT(
+		return FString::Printf(TEXT(
 				"<Title>FIRE BOLT</>\n\n"
 				"<Default>Lunches a bolt of ire exploding on impact and dealing </><Damage>%i</><Default> fire damage with a chance to burn</>\n\n"
 				"<Small>Level: </><Level>%d</>\n"
@@ -23,8 +22,7 @@ FString UAuraFireBolt::GetDescription(int32 Level)
 			static_cast<int>(Damage), Level, ManaCost, Cooldown);
 	}
 
-	return FString::Printf(
-			TEXT(
+	return FString::Printf(TEXT(
 		"<Title>FIRE BOLT</>\n\n"
 		"<Default>Lunches %d bolts of ire exploding on impact and dealing </><Damage>%d</><Default> fire damage with a chance to burn</>\n\n"
 		"<Small>Level: </><Level>%d</>\n"
@@ -39,8 +37,7 @@ FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 	const float ManaCost = GetManaCost(Level);
 	const float Cooldown = GetCooldown(Level);
 	
-	return FString::Printf(
-				TEXT(
+	return FString::Printf(TEXT(
 		"<Title>FIRE BOLT</>\n\n"
 		"<Default>Lunches %d bolts of ire exploding on impact and dealing </><Damage>%i</><Default> fire damage with a chance to burn</>\n\n"
 		"<Small>Level: </><Level>%d</>\n"
