@@ -53,3 +53,9 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageParamsFromClassDefault
 	
 	return Params;
 }
+
+float UAuraDamageGameplayAbility::GetDamageAtLevel() const
+{
+	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	return ScaledDamage;
+}
