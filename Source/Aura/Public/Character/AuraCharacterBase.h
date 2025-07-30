@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -22,6 +23,8 @@ class AURA_API AAuraCharacterBase : public ACharacter , public IAbilitySystemInt
 
 public:
 	AAuraCharacterBase();
+	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	TObjectPtr<UAttributeSet> GetAttributeSet() const { return AttributeSet; }
 
@@ -42,8 +45,10 @@ public:
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	virtual void ApplyKnockback_Implementation(const FVector& KnockbackImpulse) override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
-
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual bool GetInBeingShock_Implementation() const override;
+	virtual void SetInBeingShock_Implementation(bool bInLoop) override;
+	
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	FOnASCRegistered OnAscRegistered;
@@ -58,10 +63,23 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(ReplicatedUsing = OnRep_IsStunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bInBeingShock = false;
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UFUNCTION()
+	virtual void OnRep_IsStunned();
 protected:
-	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
@@ -133,6 +151,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagaraComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffNiagaraComponent;
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
@@ -142,4 +163,16 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Passive")
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Passive")
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Passive")
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
 };

@@ -275,6 +275,22 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Electrocute ability tag"));
 
 	/*
+	 * Passives
+	 */
+
+	GameplayTags.Abilities_Passive_HaloOfProtection = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.HaloOfProtection"),
+		FString("HaloOfProtection ability tag"));
+
+	GameplayTags.Abilities_Passive_LiveSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.LiveSiphon"),
+		FString("LiveSiphon ability tag"));
+
+	GameplayTags.Abilities_Passive_ManaSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.ManaSiphon"),
+		FString("ManaSiphon ability tag"));
+
+	/*
 	 * Cooldowns
 	 */
 
